@@ -45,52 +45,27 @@ func PrintBreachSequenceTitle(rowsCount *int) {
 
 // Prints the breach sequence
 func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *int) int {
-	var result = 0
-	var sequenceOffset = 0
-	var matchingAddressesCount = 0
+	sequenceOffset, matchingAddressesCount := matchAddresses(sequence, breachBuffer)
 
-	succesMessage := "INSTALLED"
-	errorMessage := "FAILED"
-
-	var bufferAddressesCount = 0
-	for j := 0; j < len(breachBuffer); j++ {
-		if breachBuffer[j] != "--" {
-			bufferAddressesCount++
-		}
+	if matchingAddressesCount == len(sequence) {
+		printBreachCompleteResult(true, len(breachBuffer), rowsCount)
+		return 1
 	}
-	var i = 0
-	for {
-		if (matchingAddressesCount == len(sequence)) {
-			fmt.Print(gchalk.WithBgBrightGreen().Black(succesMessage))
-			for k := 0; k < (len(breachBuffer) * 3) - len(succesMessage); k++ {
-				fmt.Print(gchalk.WithBgBrightGreen().Black(" "))
-			}
-			fmt.Println()
-			*rowsCount = *rowsCount + 1
-			return 1
-		}
-		if (i >= len(breachBuffer)) {
+
+	if (len(breachBuffer) - sequenceOffset) < len(sequence) {
+		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
+		return 1
+	}
+
+	isBreachBufferFull := true
+	for i := 0; i < len(breachBuffer); i++ {
+		if breachBuffer[i] == "--" {
+			isBreachBufferFull = false
 			break
 		}
-		for j := 0; j < len(sequence) && i + j < bufferAddressesCount; j++ {
-			if sequence[j] == breachBuffer[i + j] {
-				matchingAddressesCount++
-			} else {
-				matchingAddressesCount = 0
-				sequenceOffset++
-				break
-			}
-		}
-		i++
 	}
-	
-	if (len(breachBuffer) - sequenceOffset) < len(sequence) {
-		fmt.Print(gchalk.WithBgBrightRed().Black(errorMessage))
-		for k := 0; k < (len(breachBuffer) * 3) - len(errorMessage); k++ {
-			fmt.Print(gchalk.WithBgBrightRed().Black(" "))
-		}
-		fmt.Println()
-		*rowsCount = *rowsCount + 1
+	if matchingAddressesCount == 0 && isBreachBufferFull {
+		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
 		return 1
 	}
 
@@ -107,7 +82,7 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
-	return result
+	return 0
 }
 
 // Prints the breach buffer
@@ -170,5 +145,61 @@ func printVerticalLine() {
 // Prints the empty board space
 func printEmptySpace() {
 	fmt.Print(gchalk.WithBgBlack().Black(" "))
+}
+
+func printBreachCompleteResult(success bool, breachBufferSize int, rowsCount *int) {
+	var message string 
+	if success {
+		message = "INSTALLED"
+	} else {
+		message = "FAILED"
+	}
+	if success {
+		fmt.Print(gchalk.WithBgBrightGreen().Black(message))
+	} else {
+		fmt.Print(gchalk.WithBgBrightRed().Black(message))
+	}
+	for i := 0; i < breachBufferSize * 3 - len(message); i++ {
+		if success {
+			fmt.Print(gchalk.WithBgBrightGreen().Black(" "))
+		} else {
+			fmt.Print(gchalk.WithBgBrightRed().Black(" "))
+		}	
+	}
+	fmt.Println()
+	*rowsCount = *rowsCount + 1
+}
+
+func matchAddresses(sequence []string, breachBuffer []string) (int, int) {
+	var offset = 0
+	var matchesCount = 0
+
+	breachBufferLoopLabel:
+	for i := 0; i < len(breachBuffer); i++ {
+		sequenceLoopLabel:
+		for j := 0; j < len(sequence); j++ {
+			switch {
+			case i + j >= len(breachBuffer):
+				break breachBufferLoopLabel
+			case sequence[j] == breachBuffer[i + j]:
+				matchesCount++
+			case breachBuffer[i + j] == "--":
+				return offset, matchesCount
+			default:
+				matchesCount = 0
+				offset = i + 1
+				break sequenceLoopLabel
+			}
+		}
+		if (matchesCount == len(sequence)) {
+			// We have a full match, no need to continue
+			break
+		}
+	}
+	// If we didn't fine any matches, there should be also no offset
+	if (matchesCount == 0 && offset != 0) {
+		offset = 0
+	}
+	return offset, matchesCount
 }
 
