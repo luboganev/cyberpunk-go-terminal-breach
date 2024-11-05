@@ -10,22 +10,20 @@ import (
 
 // Prints the epic logo
 func PrintLogo() {
-	fmt.Println(gchalk.WithBgBlack().Green(" .o88b. db    db d8888b. d88888b d8888b. d8888b. db    db d8b   db db   dD     .d888b.  .d88b.  d88888D d88888D "))
-	fmt.Println(gchalk.WithBgBlack().Green("d8P  Y8 `8b  d8' 88  `8D 88'     88  `8D 88  `8D 88    88 888o  88 88 ,8P'     VP  `8D .8P  88. VP  d8' VP  d8'"))
-	fmt.Println(gchalk.WithBgBlack().Green("8P       `8bd8'  88oooY' 88ooooo 88oobY' 88oodD' 88    88 88V8o 88 88,8P          odD' 88  d'88    d8'     d8' "))
-	fmt.Println(gchalk.WithBgBlack().Green("8b         88    88~~~b. 88~~~~~ 88`8b   88~~~   88    88 88 V8o88 88`8b        .88'   88 d' 88   d8'     d8'  "))
-	fmt.Println(gchalk.WithBgBlack().Green("Y8b  d8    88    88   8D 88.     88 `88. 88      88b  d88 88  V888 88 `88.     j88.    `88  d8'  d8'     d8'   "))
-	fmt.Println(gchalk.WithBgBlack().Green(" `Y88P'    YP    Y8888P' Y88888P 88   YD 88      ~Y8888P' VP   V8P YP   YD     888888D  `Y88P'  d8'     d8'    "))
-	fmt.Println()
+	fmt.Println(gchalk.WithBgBlack().Green("     ____      _                                 _      ____   ___ _____ _____ "))
+	fmt.Println(gchalk.WithBgBlack().Green("    / ___|   _| |__   ___ _ __ _ __  _   _ _ __ | | __ |___ \\ / _ \\___  |___  |"))
+	fmt.Println(gchalk.WithBgBlack().Green("   | |  | | | | '_ \\ / _ \\ '__| '_ \\| | | | '_ \\| |/ /   __) | | | | / /   / /"))
+	fmt.Println(gchalk.WithBgBlack().Green("   | |__| |_| | |_) |  __/ |  | |_) | |_| | | | |   <   / __/| |_| |/ /   / /"))
+	fmt.Println(gchalk.WithBgBlack().Green("    \\____\\__, |_.__/ \\___|_|  | .__/ \\__,_|_| |_|_|\\_\\ |_____|\\___//_/   /_/"))
+	fmt.Println(gchalk.WithBgBlack().Green("         |___/                  |_|"))
 	fmt.Println()
 }
 
 // Prints instructions how to play
 func PrintInstructions() {
-	fmt.Println(gchalk.WithBgBlack().Green("Use arrow keys to navigate the breach surface"))
-	fmt.Println(gchalk.WithBgBlack().Green("Press enter to use a breach hole"))
-	fmt.Println(gchalk.WithBgBlack().Green("Press escape to exit the breach protocol"))
-	fmt.Println()
+	fmt.Println(gchalk.WithBgBlack().Green("   Use arrow keys to navigate the breach surface"))
+	fmt.Println(gchalk.WithBgBlack().Green("   Press enter to use a breach hole"))
+	fmt.Println(gchalk.WithBgBlack().Green("   Press escape to exit the breach protocol"))
 	fmt.Println()
 }
 
