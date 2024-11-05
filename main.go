@@ -64,7 +64,7 @@ func main() {
 
 	var hoverRowIndex = 0
 	var hoverColumnIndex = 0
-	var allowedCurrentSelectionHorizontal = true
+	var currentSelectionModeRow = true
 
 	var breachBuffer = []string{"--", "--", "--", "--", "--", "--"}
 	var currentBufferIndex = 0
@@ -80,7 +80,7 @@ func main() {
 		breach1Result := breachUI.PrintBreachSequence(breachSequence1, breachBuffer, &printedLinesCount)
 		breach2Result := breachUI.PrintBreachSequence(breachSequence2, breachBuffer, &printedLinesCount)
 		breach3Result := breachUI.PrintBreachSequence(breachSequence3, breachBuffer, &printedLinesCount)	
-		breachUI.PrintBreachSurface(breachSurface, hoverRowIndex, hoverColumnIndex, &printedLinesCount)
+		breachUI.PrintBreachSurface(breachSurface, hoverRowIndex, hoverColumnIndex, currentSelectionModeRow, &printedLinesCount)
 
 		if breach1Result != 0 && breach2Result != 0 && breach3Result != 0 {
 			break
@@ -95,17 +95,17 @@ func main() {
 			var currentBreachedHole = breachSurface[hoverRowIndex][hoverColumnIndex]
 			if currentBreachedHole.IsFree {
 				currentBreachedHole.IsFree = false
-				allowedCurrentSelectionHorizontal = !allowedCurrentSelectionHorizontal
+				currentSelectionModeRow = !currentSelectionModeRow
 				breachBuffer[currentBufferIndex] = currentBreachedHole.Address
 				currentBufferIndex++
 			}		
-		} else if keyCode == up && !allowedCurrentSelectionHorizontal {
+		} else if keyCode == up && !currentSelectionModeRow {
 			hoverRowIndex = (hoverRowIndex + len(breachSurface) - 1) % len(breachSurface)
-		} else if keyCode == down && !allowedCurrentSelectionHorizontal {
+		} else if keyCode == down && !currentSelectionModeRow {
 			hoverRowIndex = (hoverRowIndex + 1) % len(breachSurface)
-		} else if keyCode == right && allowedCurrentSelectionHorizontal {
+		} else if keyCode == right && currentSelectionModeRow {
 			hoverColumnIndex = (hoverColumnIndex + 1) % len(breachSurface)
-		} else if keyCode == left && allowedCurrentSelectionHorizontal {
+		} else if keyCode == left && currentSelectionModeRow {
 			hoverColumnIndex = (hoverColumnIndex + len(breachSurface) - 1) % len(breachSurface)
 		}
 		// If we're gonna redraw, we need to move the cursor back up the number of lines that need redrawing

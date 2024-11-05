@@ -47,16 +47,21 @@ func PrintBreachSequenceTitle(rowsCount *int) {
 func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *int) int {
 	sequenceOffset, matchingAddressesCount := matchAddresses(sequence, breachBuffer)
 
+	// if the sequence is fully matched we can count this as success
 	if matchingAddressesCount == len(sequence) {
 		printBreachCompleteResult(true, len(breachBuffer), rowsCount)
 		return 1
 	}
 
+
+	// part of the sequence is matched, but we ran out of buffer before being able to match it completely
+	// This is a failure
 	if (len(breachBuffer) - sequenceOffset) < len(sequence) {
 		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
 		return 1
 	}
 
+	// check if the whole buffer is already full
 	isBreachBufferFull := true
 	for i := 0; i < len(breachBuffer); i++ {
 		if breachBuffer[i] == "--" {
@@ -64,14 +69,18 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 			break
 		}
 	}
+
+	// if the buffer is full and we didn't match any part of the sequence, we failed
 	if matchingAddressesCount == 0 && isBreachBufferFull {
 		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
 		return 1
 	}
 
+	// start by offsetting the sequence so that it aligns with the current buffer
 	for k := 0; k < sequenceOffset * 3; k++ {
 		fmt.Print(gchalk.WithBgBlack().Yellow(" "))
 	}
+	// we then print the sequence with the matching addresses highlighted
 	for k := 0; k < len(sequence); k++ {
 		if (k < matchingAddressesCount) {
 			fmt.Print(gchalk.WithBgBlack().Cyan(sequence[k]))
@@ -98,7 +107,7 @@ func PrintBreachBuffer(breachBuffer []string, rowsCount *int) {
 }
 
 // Prints the breach surface with the borders
-func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex int, hoverColumnIndex int, rowsCount *int) {
+func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex int, hoverColumnIndex int, currentSelectionModeRow bool, rowsCount *int) {
 	var breachSurfaceSize = len(breachSurface)
 
 	// left line + left padding + each breach hole address + each padding + right line
@@ -109,8 +118,23 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 		printEmptySpace()
 		for j := 0; j < breachSurfaceSize; j++ {
 			var isHighlighted = i == hoverRowIndex && j == hoverColumnIndex
-			printBreachHole(*breachSurface[i][j], isHighlighted)
-			printEmptySpace()
+			var isSelectable bool
+			var isProjected bool
+			if currentSelectionModeRow {
+				isSelectable = i == hoverRowIndex
+				isProjected = j == hoverColumnIndex
+			} else {
+				isSelectable = j == hoverColumnIndex
+				isProjected = i == hoverRowIndex
+			}
+			printBreachHole(*breachSurface[i][j], isHighlighted, isSelectable, isProjected)
+			if isSelectable && currentSelectionModeRow {
+				fmt.Print(gchalk.WithBgRGB(80, 80, 80).Black(" "))
+			} else if isProjected && !currentSelectionModeRow {
+				fmt.Print(gchalk.WithBgRGB(50, 50, 0).Black(" "))
+			} else {
+				printEmptySpace()
+			}
 		}
 		printVerticalLine()
 		fmt.Println()
@@ -124,7 +148,7 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 // Local
 
 // Prints the breah hole
-func printBreachHole(breachHole breachModel.BreachHole, isFocused bool) {
+func printBreachHole(breachHole breachModel.BreachHole, isFocused bool, isSelectable bool, isProjected bool) {
 	switch {
 	case !breachHole.IsFree && isFocused:
 		fmt.Print(gchalk.WithBgBrightBlack().Black("[]"))
@@ -132,6 +156,10 @@ func printBreachHole(breachHole breachModel.BreachHole, isFocused bool) {
 		fmt.Print(gchalk.WithBgBlack().BrightBlack("[]"))
 	case isFocused:
 		fmt.Print(gchalk.WithBgCyan().Black(breachHole.Address))
+	case isSelectable:
+		fmt.Print(gchalk.WithBgRGB(80, 80, 80).Yellow(breachHole.Address))
+	case isProjected:
+		fmt.Print(gchalk.WithBgRGB(50, 50, 0).Yellow(breachHole.Address))
 	default:
 		fmt.Print(gchalk.WithBgBlack().Yellow(breachHole.Address))
 	}
