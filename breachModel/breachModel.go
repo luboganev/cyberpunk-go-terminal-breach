@@ -136,18 +136,18 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 		action := rand.Intn(3)
 		switch action {
 		case 0:
+			// Keep it as it was
+		case 1:
 			// Add the first entry of the next sequence to the end of the current sequence
 			var nextSequence = sequences[i+1]
 			if len(nextSequence) > 0 {
 				sequences[i] = append(sequences[i], nextSequence[0])
 			}
-		case 1:
+		case 2:
 			// Remove the last entry of the current sequence
 			if len(sequences[i]) > 0 {
 				sequences[i] = sequences[i][:len(sequences[i])-1]
 			}
-		case 2:
-			// Keep it as it was
 		}
 	}
 	return sequences
