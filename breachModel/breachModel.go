@@ -37,7 +37,7 @@ type BreachHoleWithPosition struct {
 	PositionY int
 }
 
-type BreachSquenceWithNextPosition struct {
+type BreachSequenceWithNextPosition struct {
 	sequence  []string
 	positionX int
 	positionY int
@@ -46,7 +46,7 @@ type BreachSquenceWithNextPosition struct {
 
 // Generates an array of random breach hole addresses with a length based on a known breach surface
 // starting from a specific position (positionX, positionY) and in a specific direction (isRow)
-func GenerateBreachSingleSequenceFromSurface(length int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSquenceWithNextPosition {
+func GenerateBreachSingleSequenceFromSurface(length int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSequenceWithNextPosition {
 	rand.Seed(time.Now().UnixNano())
 
 	var breachSequence = make([]string, 0)
@@ -79,7 +79,7 @@ func GenerateBreachSingleSequenceFromSurface(length int, surface [][]*BreachHole
 		isRow = !isRow
 	}
 
-	return BreachSquenceWithNextPosition{
+	return BreachSequenceWithNextPosition{
 		sequence:  breachSequence,
 		positionX: positionX,
 		positionY: positionY,
