@@ -149,6 +149,8 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 			}
 		}
 	}
+	rand.Shuffle(len(sequences), func(i, j int) { sequences[i], sequences[j] = sequences[j], sequences[i] })
+
 	return sequences
 }
 
