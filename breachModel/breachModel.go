@@ -105,7 +105,15 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 
 func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count int) [][]string {
 
-	// TODO clean up isFree on all entries or create copy in beginning
+	var shallowCopyOfSurface = make([][]*BreachHole, len(surface))
+	for i := range surface {
+		shallowCopyOfSurface[i] = make([]*BreachHole, len(surface[i]))
+
+		for j := range surface[i] {
+			shallowCopyOfSurface[i][j] = &BreachHole{Address: surface[i][j].Address, IsFree: true}
+		}
+
+	}
 
 	// Generate sequences based on surface
 	var sequences = make([][]string, count)
@@ -114,8 +122,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	var positionY = 0
 	var sequenceSize = size / count
 	for i := 0; i < count; i++ {
-		// TODO calculate individual size based on total size with potential overlap
-		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, surface, positionX, positionY, isRow)
+		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, shallowCopyOfSurface, positionX, positionY, isRow)
 
 		sequences[i] = resultingSequence.sequence
 		positionX = resultingSequence.positionX
