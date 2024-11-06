@@ -74,7 +74,6 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 				if hole.IsFree {
 					rowOfAvailableHoles = append(rowOfAvailableHoles, BreachHoleWithPosition{hole: hole, PositionX: positionX, PositionY: j})
 				}
-
 			}
 		} else {
 			for j := 0; j < len(surface); j++ {
@@ -120,7 +119,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	var isRow = true
 	var positionX = 0
 	var positionY = 0
-	var sequenceSize = size / count
+	var sequenceSize = size/count + 1
 	for i := 0; i < count; i++ {
 		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, shallowCopyOfSurface, positionX, positionY, isRow)
 

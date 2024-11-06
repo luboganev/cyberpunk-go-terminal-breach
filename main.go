@@ -59,7 +59,7 @@ func getInput() byte {
 func main() {
 	var breachSurfaceSize = 6
 	var breachSurface = breachModel.GenerateBreachSurface(breachSurfaceSize)
-	var breachSequences = breachModel.GenerateBreachSequencesFromSurface(3, breachSurface, 3)
+	var breachSequences = breachModel.GenerateBreachSequencesFromSurface(6, breachSurface, 3)
 	var breachSequence1 = breachSequences[0]
 	var breachSequence2 = breachSequences[1]
 	var breachSequence3 = breachSequences[2]
