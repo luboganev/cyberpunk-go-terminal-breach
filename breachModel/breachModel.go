@@ -93,7 +93,7 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 		positionX = nextHole.PositionX
 		positionY = nextHole.PositionY
 
-		fmt.Println("\033[%dX", positionX, "\033[%dY", positionY)
+		fmt.Println("\033[%dX", positionX, "\033[%dY", positionY, "\033[%dValue", nextHole.hole.Address)
 
 		isRow = !isRow
 	}
