@@ -1,6 +1,7 @@
 package breachUI
 
 import (
+	"main/breachModel"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ func TestMatchAddresses(t *testing.T) {
 		{
 			name:            "Full match at start",
 			sequence:        []string{"A", "B", "C"},
-			breachBuffer:    []string{"A", "B", "C", "--", "--"},
+			breachBuffer:    []string{"A", "B", "C", breachModel.BreachBufferFreeSlotSymbol, breachModel.BreachBufferFreeSlotSymbol},
 			expectedOffset:  0,
 			expectedMatches: 3,
 		},
@@ -50,7 +51,7 @@ func TestMatchAddresses(t *testing.T) {
 		{
 			name:            "Full match at the end",
 			sequence:        []string{"C", "D"},
-			breachBuffer:    []string{"A", "B", "C", "D", "--", "--"},
+			breachBuffer:    []string{"A", "B", "C", "D", breachModel.BreachBufferFreeSlotSymbol, breachModel.BreachBufferFreeSlotSymbol},
 			expectedOffset:  2,
 			expectedMatches: 2,
 		},
@@ -64,14 +65,14 @@ func TestMatchAddresses(t *testing.T) {
 		{
 			name:            "Partial match with possibility for complete match",
 			sequence:        []string{"A", "B", "C"},
-			breachBuffer:    []string{"A", "A", "A", "A", "B", "--"},
+			breachBuffer:    []string{"A", "A", "A", "A", "B", breachModel.BreachBufferFreeSlotSymbol},
 			expectedOffset:  3,
 			expectedMatches: 2,
 		},
 		{
 			name:            "Partial match with no possibility for complete match",
 			sequence:        []string{"A", "B", "C", "D"},
-			breachBuffer:    []string{"A", "A", "A", "A", "B", "--"},
+			breachBuffer:    []string{"A", "A", "A", "A", "B", breachModel.BreachBufferFreeSlotSymbol},
 			expectedOffset:  3,
 			expectedMatches: 2,
 		},
