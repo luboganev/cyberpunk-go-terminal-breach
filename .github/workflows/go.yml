@@ -56,10 +56,6 @@ jobs:
       run: |
         GOOS=darwin GOARCH=amd64 go build -o build/cyberpunk-breach-mac
 
-    - name: Build for Windows
-      run: |
-        GOOS=windows GOARCH=amd64 go build -o build/cyberpunk-breach.exe
-
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -67,5 +63,3 @@ jobs:
         path: |
           build/cyberpunk-breach-linux
           build/cyberpunk-breach-mac
-          build/cyberpunk-breach-windows.exe
-
