@@ -30,10 +30,7 @@ func PrintInstructions() {
 
 // Prints a horizontal line with the input character number length
 func PrintHorizontalLine(charactersLength int, rowsCount *int) {
-	for i := 0; i < charactersLength; i++ {
-		fmt.Print(yellowOnBlackStyle("-"))
-	}
-	fmt.Println()
+	fmt.Println(yellowOnBlackStyle(createString('-', charactersLength)))
 	*rowsCount = *rowsCount + 1
 }
 
@@ -43,26 +40,26 @@ func PrintBreachSequenceTitle(rowsCount *int) {
 }
 
 // Prints the breach sequence
-func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *int) int {
+func PrintBreachSequence(sequence []string, breachBuffer []string, breachBufferUICharacterCount int, rowsCount *int) int {
 	sequenceOffset, matchingAddressesCount := matchAddresses(sequence, breachBuffer)
 
 	// if the sequence is fully matched we can count this as success
 	if matchingAddressesCount == len(sequence) {
-		printBreachCompleteResult(true, len(breachBuffer), rowsCount)
+		printBreachCompleteResult(true, breachBufferUICharacterCount, rowsCount)
 		return 1
 	}
 
 	// part of the sequence is matched, but we ran out of buffer before being able to match it completely
 	// This is a failure
 	if (len(breachBuffer) - sequenceOffset) < len(sequence) {
-		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
+		printBreachCompleteResult(false, breachBufferUICharacterCount, rowsCount)
 		return 1
 	}
 
 	// check if the whole buffer is already full
 	isBreachBufferFull := true
 	for i := 0; i < len(breachBuffer); i++ {
-		if breachBuffer[i] == "--" {
+		if breachBuffer[i] == breachModel.BreachBufferFreeSlotSymbol {
 			isBreachBufferFull = false
 			break
 		}
@@ -70,7 +67,7 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 
 	// if the buffer is full and we didn't match any part of the sequence, we failed
 	if matchingAddressesCount == 0 && isBreachBufferFull {
-		printBreachCompleteResult(false, len(breachBuffer), rowsCount)
+		printBreachCompleteResult(false, breachBufferUICharacterCount, rowsCount)
 		return 1
 	}
 
@@ -93,8 +90,11 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 }
 
 // Prints the breach buffer
-func PrintBreachBuffer(breachBuffer []string, rowsCount *int) {
-	fmt.Println(yellowOnBlackStyle("BUFFER"))
+func PrintBreachBuffer(breachBuffer []string, rowsCount *int) (widthCharacterCount int) {
+	widthCharacterCount = len(breachBuffer)*3 - 1
+	title := "// BUFFER"
+	title = title + createString(' ', widthCharacterCount-len(title))
+	fmt.Println(yellowOnYellowDimStyle(title))
 	*rowsCount = *rowsCount + 1
 	for i := 0; i < len(breachBuffer); i++ {
 		fmt.Print(yellowOnBlackStyle(breachBuffer[i]))
@@ -102,14 +102,21 @@ func PrintBreachBuffer(breachBuffer []string, rowsCount *int) {
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
+	fmt.Println(yellowOnYellowDimStyle(createString(' ', widthCharacterCount)))
+	*rowsCount = *rowsCount + 1
+	return
 }
 
 // Prints the breach surface with the borders
 func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex int, hoverColumnIndex int, currentSelectionModeRow bool, rowsCount *int) {
 	var breachSurfaceSize = len(breachSurface)
-
 	// left line + left padding + each breach hole address + each padding + right line
-	PrintHorizontalLine(1+1+breachSurfaceSize*3+1, rowsCount)
+	surfaceWidth := 1 + 1 + breachSurfaceSize*3 + 1
+
+	title := "// CODE MATRIX"
+	title = title + createString(' ', surfaceWidth-len(title))
+	fmt.Println(blackOnYellowStyle(title))
+	*rowsCount = *rowsCount + 1
 
 	for i := 0; i < breachSurfaceSize; i++ {
 		printVerticalLine()
@@ -139,8 +146,7 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 		*rowsCount = *rowsCount + 1
 	}
 
-	// left line + left padding + each breach hole address + each padding + right line
-	PrintHorizontalLine(1+1+breachSurfaceSize*3+1, rowsCount)
+	PrintHorizontalLine(surfaceWidth, rowsCount)
 }
 
 // Prints the empty board space
@@ -151,25 +157,32 @@ func printEmptySpace(characterCount int) {
 }
 
 // Local
+const breachSurfaceNonFreeSlotSymbol = "[]"
+
 var greenOnBlackStyle = gchalk.WithReset().WithBgBlack().Green
+
 var blackOnRedStyle = gchalk.WithReset().WithBgRGB(255, 87, 80).Black
 var blackOnGreenStyle = gchalk.WithReset().WithBgRGB(27, 213, 118).Black
 var blackOnBlackStyle = gchalk.WithReset().WithBgBlack().Black
+var blackOnCyanStyle = gchalk.WithReset().WithBgRGB(119, 228, 226).Black
+var blackOnGreyStyle = gchalk.WithReset().WithBgRGB(68, 75, 91).Black
+var blackOnYellowStyle = gchalk.WithReset().WithBgRGB(223, 240, 119).Black
+
 var yellowOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(223, 240, 119)
 var yellowOnGreyStyle = gchalk.WithReset().WithBgRGB(68, 75, 91).RGB(223, 240, 119)
 var yellowOnYellowDimStyle = gchalk.WithReset().WithBgRGB(50, 50, 0).RGB(223, 240, 119)
-var blackOnCyanStyle = gchalk.WithReset().WithBgRGB(119, 228, 226).Black
-var blackOnGreyStyle = gchalk.WithReset().WithBgRGB(68, 75, 91).Black
+
 var greyOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(68, 75, 91)
+
 var cyanOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(119, 228, 226)
 
 // Prints the breah hole
 func printBreachHole(breachHole breachModel.BreachHole, isFocused bool, isSelectable bool, isProjected bool) {
 	switch {
 	case !breachHole.IsFree && isFocused:
-		fmt.Print(blackOnGreyStyle("[]"))
+		fmt.Print(blackOnGreyStyle(breachSurfaceNonFreeSlotSymbol))
 	case !breachHole.IsFree:
-		fmt.Print(greyOnBlackStyle("[]"))
+		fmt.Print(greyOnBlackStyle(breachSurfaceNonFreeSlotSymbol))
 	case isFocused:
 		fmt.Print(blackOnCyanStyle(breachHole.Address))
 	case isSelectable:
@@ -186,24 +199,15 @@ func printVerticalLine() {
 	fmt.Print(yellowOnBlackStyle("|"))
 }
 
-func printBreachCompleteResult(success bool, breachBufferSize int, rowsCount *int) {
+func printBreachCompleteResult(success bool, rowCharacterCount int, rowsCount *int) {
 	var message string
 	if success {
-		message = "INSTALLED"
-		fmt.Print(blackOnGreenStyle(message))
+		message = "INSTALLED" + createString(' ', rowCharacterCount-len(message))
+		fmt.Println(blackOnGreenStyle(message))
 	} else {
-		message = "FAILED"
-		fmt.Print(blackOnRedStyle(message))
+		message = "FAILED" + createString(' ', rowCharacterCount-len(message))
+		fmt.Println(blackOnRedStyle(message))
 	}
-
-	for i := 0; i < breachBufferSize*3-len(message); i++ {
-		if success {
-			fmt.Print(blackOnGreenStyle(" "))
-		} else {
-			fmt.Print(blackOnRedStyle(" "))
-		}
-	}
-	fmt.Println()
 	*rowsCount = *rowsCount + 1
 }
 
@@ -220,7 +224,7 @@ breachBufferLoopLabel:
 				break breachBufferLoopLabel
 			case sequence[j] == breachBuffer[i+j]:
 				matchesCount++
-			case breachBuffer[i+j] == "--":
+			case breachBuffer[i+j] == breachModel.BreachBufferFreeSlotSymbol:
 				return
 			default:
 				matchesCount = 0
@@ -238,4 +242,20 @@ breachBufferLoopLabel:
 		offset = 0
 	}
 	return
+}
+
+// CreateEmptyString returns a string of empty characters (' ') of the specified length.
+func createString(char byte, length int) string {
+	if length <= 0 {
+		return ""
+	}
+
+	// Create a byte slice of specified length
+	chars := make([]byte, length)
+	for i := range chars {
+		chars[i] = char
+	}
+
+	// Leaving it with zero bytes (0x00), as the task is to create a string of empty characters
+	return string(chars)
 }

@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
-	"github.com/pkg/term"
 	"log"
 	"main/breachModel"
 	"main/breachUI"
+
+	"github.com/pkg/term"
 )
 
 // UI interaction
 // Raw input keycodes
-var up byte = 65 // A
-var down byte = 66 // B
+var up byte = 65    // A
+var down byte = 66  // B
 var right byte = 67 // C
-var left byte = 68 // D
+var left byte = 68  // D
 var escape byte = 27
 var enter byte = 13
-var keys = map[byte]bool {
-	up: true,
-	down: true,
+var keys = map[byte]bool{
+	up:    true,
+	down:  true,
 	right: true,
-	left: true,
+	left:  true,
 }
 
 // getInput will read raw input from the terminal
@@ -66,7 +67,7 @@ func main() {
 	var hoverColumnIndex = 0
 	var currentSelectionModeRow = true
 
-	var breachBuffer = []string{"--", "--", "--", "--", "--", "--"}
+	var breachBuffer = breachModel.GenerateBreachBuffer(6)
 	var currentBufferIndex = 0
 	var printedLinesCount = 0
 
@@ -74,12 +75,15 @@ func main() {
 	breachUI.PrintInstructions()
 
 	for {
-		breachUI.PrintBreachBuffer(breachBuffer, &printedLinesCount)
-		breachUI.PrintHorizontalLine(breachSurfaceSize * 3 + 3, &printedLinesCount)
+		breachBufferWidth := breachUI.PrintBreachBuffer(breachBuffer, &printedLinesCount)
+		fmt.Println()
+		printedLinesCount++
 		breachUI.PrintBreachSequenceTitle(&printedLinesCount)
-		breach1Result := breachUI.PrintBreachSequence(breachSequence1, breachBuffer, &printedLinesCount)
-		breach2Result := breachUI.PrintBreachSequence(breachSequence2, breachBuffer, &printedLinesCount)
-		breach3Result := breachUI.PrintBreachSequence(breachSequence3, breachBuffer, &printedLinesCount)	
+		breach1Result := breachUI.PrintBreachSequence(breachSequence1, breachBuffer, breachBufferWidth, &printedLinesCount)
+		breach2Result := breachUI.PrintBreachSequence(breachSequence2, breachBuffer, breachBufferWidth, &printedLinesCount)
+		breach3Result := breachUI.PrintBreachSequence(breachSequence3, breachBuffer, breachBufferWidth, &printedLinesCount)
+		fmt.Println()
+		printedLinesCount++
 		breachUI.PrintBreachSurface(breachSurface, hoverRowIndex, hoverColumnIndex, currentSelectionModeRow, &printedLinesCount)
 
 		if breach1Result != 0 && breach2Result != 0 && breach3Result != 0 {
@@ -98,7 +102,7 @@ func main() {
 				currentSelectionModeRow = !currentSelectionModeRow
 				breachBuffer[currentBufferIndex] = currentBreachedHole.Address
 				currentBufferIndex++
-			}		
+			}
 		} else if keyCode == up && !currentSelectionModeRow {
 			hoverRowIndex = (hoverRowIndex + len(breachSurface) - 1) % len(breachSurface)
 		} else if keyCode == down && !currentSelectionModeRow {
