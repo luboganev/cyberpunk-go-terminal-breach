@@ -1,6 +1,7 @@
 package breachModel
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -91,6 +92,9 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 		// Update the position and direction for next iteration
 		positionX = nextHole.PositionX
 		positionY = nextHole.PositionY
+
+		fmt.Println("\033[%dX", positionX, "\033[%dY", positionY)
+
 		isRow = !isRow
 	}
 
