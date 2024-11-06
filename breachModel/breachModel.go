@@ -123,7 +123,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	var isRow = true
 	var positionX = 0
 	var positionY = 0
-	var sequenceSize = size/count + 1
+	var sequenceSize = size / count
 	for i := 0; i < count; i++ {
 		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, shallowCopyOfSurface, positionX, positionY, isRow)
 
