@@ -1,6 +1,6 @@
 module main
 
-go 1.23.2
+go 1.23
 
 require (
 	github.com/jwalton/gchalk v1.3.0 // indirect

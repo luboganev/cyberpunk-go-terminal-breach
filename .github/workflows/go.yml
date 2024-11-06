@@ -19,7 +19,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.23'
 
     - name: Cache Go modules
       uses: actions/cache@v3
@@ -46,26 +46,26 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.23'
         
     - name: Build for Linux
       run: |
-        GOOS=linux GOARCH=amd64 go build -o cyberpunk-breach-linux
+        GOOS=linux GOARCH=amd64 go build -o build/cyberpunk-breach-linux
 
     - name: Build for macOS
       run: |
-        GOOS=darwin GOARCH=amd64 go build -o cyberpunk-breach-mac
+        GOOS=darwin GOARCH=amd64 go build -o build/cyberpunk-breach-mac
 
     - name: Build for Windows
       run: |
-        GOOS=windows GOARCH=amd64 go build -o cyberpunk-breach.exe
+        GOOS=windows GOARCH=amd64 go build -o build/cyberpunk-breach.exe
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: executables
         path: |
-          cyberpunk-breach-linux
-          cyberpunk-breach-mac
-          cyberpunk-breach-windows.exe
+          build/cyberpunk-breach-linux
+          build/cyberpunk-breach-mac
+          build/cyberpunk-breach-windows.exe
 
