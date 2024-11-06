@@ -2,42 +2,43 @@ package breachUI
 
 import (
 	"fmt"
-	"github.com/jwalton/gchalk"
 	"main/breachModel"
+
+	"github.com/jwalton/gchalk"
 )
 
 // Exported
 
 // Prints the epic logo
 func PrintLogo() {
-	fmt.Println(gchalk.WithBgBlack().Green("     ____      _                                 _      ____   ___ _____ _____ "))
-	fmt.Println(gchalk.WithBgBlack().Green("    / ___|   _| |__   ___ _ __ _ __  _   _ _ __ | | __ |___ \\ / _ \\___  |___  |"))
-	fmt.Println(gchalk.WithBgBlack().Green("   | |  | | | | '_ \\ / _ \\ '__| '_ \\| | | | '_ \\| |/ /   __) | | | | / /   / /"))
-	fmt.Println(gchalk.WithBgBlack().Green("   | |__| |_| | |_) |  __/ |  | |_) | |_| | | | |   <   / __/| |_| |/ /   / /"))
-	fmt.Println(gchalk.WithBgBlack().Green("    \\____\\__, |_.__/ \\___|_|  | .__/ \\__,_|_| |_|_|\\_\\ |_____|\\___//_/   /_/"))
-	fmt.Println(gchalk.WithBgBlack().Green("         |___/                  |_|"))
+	fmt.Println(greenOnBlackStyle("  ____      _                                 _      ____   ___ _____ _____ "))
+	fmt.Println(greenOnBlackStyle(" / ___|   _| |__   ___ _ __ _ __  _   _ _ __ | | __ |___ \\ / _ \\___  |___  |"))
+	fmt.Println(greenOnBlackStyle("| |  | | | | '_ \\ / _ \\ '__| '_ \\| | | | '_ \\| |/ /   __) | | | | / /   / /"))
+	fmt.Println(greenOnBlackStyle("| |__| |_| | |_) |  __/ |  | |_) | |_| | | | |   <   / __/| |_| |/ /   / /"))
+	fmt.Println(greenOnBlackStyle(" \\____\\__, |_.__/ \\___|_|  | .__/ \\__,_|_| |_|_|\\_\\ |_____|\\___//_/   /_/"))
+	fmt.Println(greenOnBlackStyle("      |___/                  |_|"))
 	fmt.Println()
 }
 
 // Prints instructions how to play
 func PrintInstructions() {
-	fmt.Println(gchalk.WithBgBlack().Green("   Use arrow keys to navigate the breach surface"))
-	fmt.Println(gchalk.WithBgBlack().Green("   Press enter to use a breach hole"))
-	fmt.Println(gchalk.WithBgBlack().Green("   Press escape to exit the breach protocol"))
+	fmt.Println(greenOnBlackStyle("Use arrow keys to navigate the breach surface"))
+	fmt.Println(greenOnBlackStyle("Press enter to use a breach hole"))
+	fmt.Println(greenOnBlackStyle("Press escape to exit the breach protocol"))
 	fmt.Println()
 }
 
 // Prints a horizontal line with the input character number length
 func PrintHorizontalLine(charactersLength int, rowsCount *int) {
 	for i := 0; i < charactersLength; i++ {
-		fmt.Print(gchalk.WithBgBlack().Yellow("-"))
+		fmt.Print(yellowOnBlackStyle("-"))
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
 }
 
 func PrintBreachSequenceTitle(rowsCount *int) {
-	fmt.Println(gchalk.WithBgBlack().Yellow("SEQUENCES REQUIRED TO UPLOAD"))
+	fmt.Println(yellowOnBlackStyle("SEQUENCES REQUIRED TO UPLOAD"))
 	*rowsCount = *rowsCount + 1
 }
 
@@ -50,7 +51,6 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 		printBreachCompleteResult(true, len(breachBuffer), rowsCount)
 		return 1
 	}
-
 
 	// part of the sequence is matched, but we ran out of buffer before being able to match it completely
 	// This is a failure
@@ -75,17 +75,17 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 	}
 
 	// start by offsetting the sequence so that it aligns with the current buffer
-	for k := 0; k < sequenceOffset * 3; k++ {
-		fmt.Print(gchalk.WithBgBlack().Yellow(" "))
+	for k := 0; k < sequenceOffset*3; k++ {
+		fmt.Print(blackOnBlackStyle(" "))
 	}
 	// we then print the sequence with the matching addresses highlighted
 	for k := 0; k < len(sequence); k++ {
-		if (k < matchingAddressesCount) {
-			fmt.Print(gchalk.WithBgBlack().Cyan(sequence[k]))
+		if k < matchingAddressesCount {
+			fmt.Print(cyanOnBlackStyle(sequence[k]))
 		} else {
-			fmt.Print(gchalk.WithBgBlack().Yellow(sequence[k]))
+			fmt.Print(yellowOnBlackStyle(sequence[k]))
 		}
-		fmt.Print(gchalk.WithBgBlack().Yellow(" "))
+		fmt.Print(blackOnBlackStyle(" "))
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
@@ -94,11 +94,11 @@ func PrintBreachSequence(sequence []string, breachBuffer []string, rowsCount *in
 
 // Prints the breach buffer
 func PrintBreachBuffer(breachBuffer []string, rowsCount *int) {
-	fmt.Println(gchalk.WithBgBlack().Yellow("BUFFER"))
+	fmt.Println(yellowOnBlackStyle("BUFFER"))
 	*rowsCount = *rowsCount + 1
 	for i := 0; i < len(breachBuffer); i++ {
-		fmt.Print(gchalk.WithBgBlack().Yellow(breachBuffer[i]))
-		fmt.Print(gchalk.WithBgBlack().Yellow(" "))
+		fmt.Print(yellowOnBlackStyle(breachBuffer[i]))
+		fmt.Print(blackOnBlackStyle(" "))
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
@@ -109,11 +109,11 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 	var breachSurfaceSize = len(breachSurface)
 
 	// left line + left padding + each breach hole address + each padding + right line
-	PrintHorizontalLine(1 + 1 + breachSurfaceSize * 3 + 1, rowsCount)
+	PrintHorizontalLine(1+1+breachSurfaceSize*3+1, rowsCount)
 
 	for i := 0; i < breachSurfaceSize; i++ {
 		printVerticalLine()
-		printEmptySpace()
+		printEmptySpace(1)
 		for j := 0; j < breachSurfaceSize; j++ {
 			var isHighlighted = i == hoverRowIndex && j == hoverColumnIndex
 			var isSelectable bool
@@ -131,7 +131,7 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 			} else if isProjected && !currentSelectionModeRow {
 				fmt.Print(gchalk.WithBgRGB(50, 50, 0).Black(" "))
 			} else {
-				printEmptySpace()
+				printEmptySpace(1)
 			}
 		}
 		printVerticalLine()
@@ -140,92 +140,102 @@ func PrintBreachSurface(breachSurface [][]*breachModel.BreachHole, hoverRowIndex
 	}
 
 	// left line + left padding + each breach hole address + each padding + right line
-	PrintHorizontalLine(1 + 1 + breachSurfaceSize * 3 + 1, rowsCount)
+	PrintHorizontalLine(1+1+breachSurfaceSize*3+1, rowsCount)
+}
+
+// Prints the empty board space
+func printEmptySpace(characterCount int) {
+	for i := 0; i < characterCount; i++ {
+		fmt.Print(gchalk.WithBgBlack().Black(" "))
+	}
 }
 
 // Local
+var greenOnBlackStyle = gchalk.WithReset().WithBgBlack().Green
+var blackOnRedStyle = gchalk.WithReset().WithBgRGB(255, 87, 80).Black
+var blackOnGreenStyle = gchalk.WithReset().WithBgRGB(27, 213, 118).Black
+var blackOnBlackStyle = gchalk.WithReset().WithBgBlack().Black
+var yellowOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(223, 240, 119)
+var yellowOnGreyStyle = gchalk.WithReset().WithBgRGB(68, 75, 91).RGB(223, 240, 119)
+var yellowOnYellowDimStyle = gchalk.WithReset().WithBgRGB(50, 50, 0).RGB(223, 240, 119)
+var blackOnCyanStyle = gchalk.WithReset().WithBgRGB(119, 228, 226).Black
+var blackOnGreyStyle = gchalk.WithReset().WithBgRGB(68, 75, 91).Black
+var greyOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(68, 75, 91)
+var cyanOnBlackStyle = gchalk.WithReset().WithBgBlack().RGB(119, 228, 226)
 
 // Prints the breah hole
 func printBreachHole(breachHole breachModel.BreachHole, isFocused bool, isSelectable bool, isProjected bool) {
 	switch {
 	case !breachHole.IsFree && isFocused:
-		fmt.Print(gchalk.WithBgBrightBlack().Black("[]"))
+		fmt.Print(blackOnGreyStyle("[]"))
 	case !breachHole.IsFree:
-		fmt.Print(gchalk.WithBgBlack().BrightBlack("[]"))
+		fmt.Print(greyOnBlackStyle("[]"))
 	case isFocused:
-		fmt.Print(gchalk.WithBgCyan().Black(breachHole.Address))
+		fmt.Print(blackOnCyanStyle(breachHole.Address))
 	case isSelectable:
-		fmt.Print(gchalk.WithBgRGB(80, 80, 80).Yellow(breachHole.Address))
+		fmt.Print(yellowOnGreyStyle(breachHole.Address))
 	case isProjected:
-		fmt.Print(gchalk.WithBgRGB(50, 50, 0).Yellow(breachHole.Address))
+		fmt.Print(yellowOnYellowDimStyle(breachHole.Address))
 	default:
-		fmt.Print(gchalk.WithBgBlack().Yellow(breachHole.Address))
+		fmt.Print(yellowOnBlackStyle(breachHole.Address))
 	}
 }
 
 // Prints the vertical line
 func printVerticalLine() {
-	fmt.Print(gchalk.WithBgBlack().Yellow("|"))
-}
-
-// Prints the empty board space
-func printEmptySpace() {
-	fmt.Print(gchalk.WithBgBlack().Black(" "))
+	fmt.Print(yellowOnBlackStyle("|"))
 }
 
 func printBreachCompleteResult(success bool, breachBufferSize int, rowsCount *int) {
-	var message string 
+	var message string
 	if success {
 		message = "INSTALLED"
+		fmt.Print(blackOnGreenStyle(message))
 	} else {
 		message = "FAILED"
+		fmt.Print(blackOnRedStyle(message))
 	}
-	if success {
-		fmt.Print(gchalk.WithBgBrightGreen().Black(message))
-	} else {
-		fmt.Print(gchalk.WithBgBrightRed().Black(message))
-	}
-	for i := 0; i < breachBufferSize * 3 - len(message); i++ {
+
+	for i := 0; i < breachBufferSize*3-len(message); i++ {
 		if success {
-			fmt.Print(gchalk.WithBgBrightGreen().Black(" "))
+			fmt.Print(blackOnGreenStyle(" "))
 		} else {
-			fmt.Print(gchalk.WithBgBrightRed().Black(" "))
-		}	
+			fmt.Print(blackOnRedStyle(" "))
+		}
 	}
 	fmt.Println()
 	*rowsCount = *rowsCount + 1
 }
 
-func matchAddresses(sequence []string, breachBuffer []string) (int, int) {
-	var offset = 0
-	var matchesCount = 0
+func matchAddresses(sequence []string, breachBuffer []string) (offset int, matchesCount int) {
+	offset = 0
+	matchesCount = 0
 
-	breachBufferLoopLabel:
+breachBufferLoopLabel:
 	for i := 0; i < len(breachBuffer); i++ {
-		sequenceLoopLabel:
+	sequenceLoopLabel:
 		for j := 0; j < len(sequence); j++ {
 			switch {
-			case i + j >= len(breachBuffer):
+			case i+j >= len(breachBuffer):
 				break breachBufferLoopLabel
-			case sequence[j] == breachBuffer[i + j]:
+			case sequence[j] == breachBuffer[i+j]:
 				matchesCount++
-			case breachBuffer[i + j] == "--":
-				return offset, matchesCount
+			case breachBuffer[i+j] == "--":
+				return
 			default:
 				matchesCount = 0
 				offset = i + 1
 				break sequenceLoopLabel
 			}
 		}
-		if (matchesCount == len(sequence)) {
+		if matchesCount == len(sequence) {
 			// We have a full match, no need to continue
 			break
+			// If we didn't fine any matches, there should be also no offset
 		}
 	}
-	// If we didn't fine any matches, there should be also no offset
-	if (matchesCount == 0 && offset != 0) {
+	if matchesCount == 0 && offset != 0 {
 		offset = 0
 	}
-	return offset, matchesCount
+	return
 }
-
