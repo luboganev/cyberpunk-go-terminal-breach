@@ -64,7 +64,7 @@ type BreachSquenceWithNextPosition struct {
 func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSquenceWithNextPosition {
 	rand.Seed(time.Now().UnixNano())
 
-	var breachSequence = make([]string, size)
+	var breachSequence = make([]string, 0)
 	for i := 0; i < size; i++ {
 		var rowOfAvailableHoles = make([]BreachHoleWithPosition, 0)
 
@@ -86,7 +86,7 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 		}
 
 		var nextHole = rowOfAvailableHoles[rand.Intn(len(rowOfAvailableHoles))]
-		breachSequence[i] = nextHole.hole.Address
+		breachSequence = append(breachSequence, nextHole.hole.Address)
 		// Ensure we don't use the same hole twice
 		nextHole.hole.IsFree = false
 		// Update the position and direction for next iteration
@@ -116,7 +116,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	}
 
 	// Generate sequences based on surface
-	var sequences = make([][]string, count)
+	var sequences = make([][]string, 0)
 	var isRow = true
 	var positionX = 0
 	var positionY = 0
@@ -124,7 +124,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	for i := 0; i < count; i++ {
 		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, shallowCopyOfSurface, positionX, positionY, isRow)
 
-		sequences[i] = resultingSequence.sequence
+		sequences = append(sequences, resultingSequence.sequence)
 		positionX = resultingSequence.positionX
 		positionY = resultingSequence.positionY
 		isRow = resultingSequence.isRow
