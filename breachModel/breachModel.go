@@ -46,6 +46,106 @@ func GenerateBreachSurface(size int) [][]*BreachHole {
 	return breachSurface
 }
 
+type BreachHoleWithPosition struct {
+	hole      *BreachHole
+	PositionX int
+	PositionY int
+}
+
+type BreachSquenceWithNextPosition struct {
+	sequence  []string
+	positionX int
+	positionY int
+	isRow     bool
+}
+
+// Generates an array of random breach hole addresses with a length size based on a known breach surface
+// starting from a specific position (positionX, positionY) and in a specific direction (isRow)
+func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSquenceWithNextPosition {
+	rand.Seed(time.Now().UnixNano())
+
+	var breachSequence = make([]string, size)
+	for i := 0; i < size; i++ {
+		var rowOfAvailableHoles = make([]BreachHoleWithPosition, 0)
+
+		if isRow {
+			for j := 0; j < len(surface); j++ {
+				var hole = surface[positionX][j]
+				if hole.IsFree {
+					rowOfAvailableHoles = append(rowOfAvailableHoles, BreachHoleWithPosition{hole: hole, PositionX: positionX, PositionY: j})
+				}
+
+			}
+		} else {
+			for j := 0; j < len(surface); j++ {
+				var hole = surface[j][positionY]
+				if hole.IsFree {
+					rowOfAvailableHoles = append(rowOfAvailableHoles, BreachHoleWithPosition{hole: hole, PositionX: j, PositionY: positionY})
+				}
+			}
+		}
+
+		var nextHole = rowOfAvailableHoles[rand.Intn(len(rowOfAvailableHoles))]
+		breachSequence[i] = nextHole.hole.Address
+		// Ensure we don't use the same hole twice
+		nextHole.hole.IsFree = false
+		// Update the position and direction for next iteration
+		positionX = nextHole.PositionX
+		positionY = nextHole.PositionY
+		isRow = !isRow
+	}
+
+	return BreachSquenceWithNextPosition{
+		sequence:  breachSequence,
+		positionX: positionX,
+		positionY: positionY,
+		isRow:     isRow,
+	}
+}
+
+func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count int) [][]string {
+
+	// TODO clean up isFree on all entries or create copy in beginning
+
+	// Generate sequences based on surface
+	var sequences = make([][]string, count)
+	var isRow = true
+	var positionX = 0
+	var positionY = 0
+	var sequenceSize = size / count
+	for i := 0; i < count; i++ {
+		// TODO calculate individual size based on total size with potential overlap
+		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, surface, positionX, positionY, isRow)
+
+		sequences[i] = resultingSequence.sequence
+		positionX = resultingSequence.positionX
+		positionY = resultingSequence.positionY
+		isRow = resultingSequence.isRow
+	}
+
+	// Randomize overlap of sequences
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < count-1; i++ {
+		action := rand.Intn(3)
+		switch action {
+		case 0:
+			// Add the first entry of the next sequence to the end of the current sequence
+			var nextSequence = sequences[i+1]
+			if len(nextSequence) > 0 {
+				sequences[i] = append(sequences[i], nextSequence[0])
+			}
+		case 1:
+			// Remove the last entry of the current sequence
+			if len(sequences[i]) > 0 {
+				sequences[i] = sequences[i][:len(sequences[i])-1]
+			}
+		case 2:
+			// Keep it as it was
+		}
+	}
+	return sequences
+}
+
 func GenerateBreachBuffer(size int) []string {
 	var breachBuffer = make([]string, size)
 	for i := 0; i < size; i++ {
