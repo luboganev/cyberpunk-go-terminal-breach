@@ -16,21 +16,6 @@ type BreachHole struct {
 	IsFree  bool
 }
 
-// Generates an array of random breach hole addresses with a length [2, maxLength]
-func GenerateBreachSequence(maxLength int) []string {
-	rand.Seed(time.Now().UnixNano())
-	var size = 0
-	for size < 2 {
-		size = rand.Intn(maxLength + 1)
-	}
-	var breachSequence = make([]string, size)
-	for i := 0; i < size; i++ {
-		randItemIndex := rand.Intn(len(knownBreachHoleAddresses))
-		breachSequence[i] = knownBreachHoleAddresses[randItemIndex]
-	}
-	return breachSequence
-}
-
 // Generates a square
 func GenerateBreachSurface(size int) [][]*BreachHole {
 	rand.Seed(time.Now().UnixNano())
@@ -59,13 +44,13 @@ type BreachSquenceWithNextPosition struct {
 	isRow     bool
 }
 
-// Generates an array of random breach hole addresses with a length size based on a known breach surface
+// Generates an array of random breach hole addresses with a length based on a known breach surface
 // starting from a specific position (positionX, positionY) and in a specific direction (isRow)
-func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSquenceWithNextPosition {
+func GenerateBreachSingleSequenceFromSurface(length int, surface [][]*BreachHole, positionX int, positionY int, isRow bool) BreachSquenceWithNextPosition {
 	rand.Seed(time.Now().UnixNano())
 
 	var breachSequence = make([]string, 0)
-	for i := 0; i < size; i++ {
+	for i := 0; i < length; i++ {
 		var rowOfAvailableHoles = make([]BreachHoleWithPosition, 0)
 
 		if isRow {
@@ -102,7 +87,10 @@ func GenerateBreachSingleSequenceFromSurface(size int, surface [][]*BreachHole, 
 	}
 }
 
-func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count int) [][]string {
+// Generates a list of sequences with a combined total length based on a known breach surface
+// Will randomly add overlap or remove parts of the sequences to make them more interesting
+// Shuffles the sequences at the end to not indicate the order of the sequences
+func GenerateBreachSequencesFromSurface(length int, surface [][]*BreachHole, count int) [][]string {
 
 	var shallowCopyOfSurface = make([][]*BreachHole, len(surface))
 	for i := range surface {
@@ -119,7 +107,7 @@ func GenerateBreachSequencesFromSurface(size int, surface [][]*BreachHole, count
 	var isRow = true
 	var positionX = 0
 	var positionY = 0
-	var sequenceSize = size / count
+	var sequenceSize = length / count
 	for i := 0; i < count; i++ {
 		var resultingSequence = GenerateBreachSingleSequenceFromSurface(sequenceSize, shallowCopyOfSurface, positionX, positionY, isRow)
 
