@@ -22,7 +22,7 @@ func main() {
 	breachUI.PrintInstructions()
 
 	onUseBreachHole := func(hoverRowIndex int, hoverColumnIndex int) bool {
-		var currentBreachedHole = breachSurface[hoverRowIndex][hoverColumnIndex]
+		currentBreachedHole := breachSurface[hoverRowIndex][hoverColumnIndex]
 		if currentBreachedHole.IsFree {
 			currentBreachedHole.IsFree = false
 			breachBuffer[currentBufferIndex] = currentBreachedHole.Address
